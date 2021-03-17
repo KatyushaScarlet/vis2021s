@@ -48,27 +48,27 @@
   stroke-width = "10"
   stroke       = "#F00"
   fill         = "none"
-  opacity      = "0.3"/>
-  <rect x="5" y="123" width="382" height="260" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <line x1="10" y1="234" x2="112" y2="234" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <line x1="280" y1="234" x2="382" y2="234" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
+  opacity      = "0.5"/>
+  <rect x="5" y="123" width="382" height="260" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <line x1="10" y1="234" x2="112" y2="234" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <line x1="280" y1="234" x2="382" y2="234" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
   <path
   d = "M 168 325
        A 50 200, 0, 0, 0, 219 325"
   stroke-width = "10"
   stroke       = "#F00"
   fill         = "none"
-  opacity      = "0.3"/>
+  opacity      = "0.5"/>
 
-  <path d="M145 384 A120 120, 0, 0, 0, 128 446" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <path d="M130 415 A145 22, -40, 0, 0, 120 470" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <path d="M128 442 A35 35, 0, 0, 0, 150 495" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <path d="M128 445 A25 28, 0, 0, 1, 149 497" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <path d="M160 488 H225" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <path d="M245 384 A120 120, 0, 0, 1, 256 446" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <path d="M256 410 A145 23, 43, 0, 1, 270 473" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <path d="M256 442 A40 35, 0, 0, 0, 230 495" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <path d="M256 445 A24 30, 0, 0, 1, 230 495" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
+  <path d="M145 384 A120 120, 0, 0, 0, 128 446" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <path d="M130 415 A145 22, -40, 0, 0, 120 470" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <path d="M128 442 A35 35, 0, 0, 0, 150 495" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <path d="M128 445 A25 28, 0, 0, 1, 149 497" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <path d="M160 488 H225" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <path d="M245 384 A120 120, 0, 0, 1, 256 446" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <path d="M256 410 A145 23, 43, 0, 1, 270 473" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <path d="M256 442 A40 35, 0, 0, 0, 230 495" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <path d="M256 445 A24 30, 0, 0, 1, 230 495" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
 
 
 
@@ -79,7 +79,7 @@
   stroke-width = "10"
   stroke       = "#F00"
   fill         = "none"
-  opacity      = "0.3"/>
+  opacity      = "0.5"/>
   <path
   d = "M 440 355
        C 430 400, 460 390, 470 370
@@ -87,14 +87,14 @@
   stroke-width = "10"
   stroke       = "#F00"
   fill         = "none"
-  opacity      = "0.3"/>
-  <line x1="453" y1="356" x2="461" y2="340" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <line x1="462" y1="361" x2="470" y2="345" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
+  opacity      = "0.5"/>
+  <line x1="453" y1="356" x2="461" y2="340" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <line x1="462" y1="361" x2="470" y2="345" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
 
-  <line x1="427" y1="332" x2="435" y2="305" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <line x1="435" y1="344" x2="443" y2="317" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
+  <line x1="427" y1="332" x2="435" y2="305" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <line x1="435" y1="344" x2="443" y2="317" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
 
-  <line x1="484" y1="354" x2="505" y2="347" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
-  <line x1="485" y1="342" x2="510" y2="334" stroke-width="10" stroke="#F00" fill="none" opacity="0.3"/>
+  <line x1="484" y1="354" x2="505" y2="347" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
+  <line x1="485" y1="342" x2="510" y2="334" stroke-width="10" stroke="#F00" fill="none" opacity="0.5"/>
 
 </svg>
