@@ -3,9 +3,10 @@
 <head>
     <meta charset="utf-8">
     <title>Lab</title>
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="d3.v6.min.js" charset="utf-8"></script>
+	<script src="chart.js"></script>
     <style type="text/css">
-		div.bar{
+		/* div.bar{
 		font-family:"Times New Roman";
         color: white;
 		background-color: #66ccff;
@@ -28,51 +29,128 @@
     		border: 1px red solid;
     		padding: 20px;
 			text-align: center;
-    	}
+    	} */
 
+		div.bar {
+			padding: 7px;
+			width: 80vw;
+			height: 35vw;
+			margin: auto;
+		}
+
+		body {
+			border: 1px red solid;
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		@font-face {
+		font-family: zpix;
+		src: url(Zpix.ttf);
+		}
+
+		h1{
+			font-family: "zpix";
+		}
     </style>
 </head>
 <body>
-
+	<h1>Lab 05 作業</h1>
+	<div class="bar"> <canvas id="myChart"></canvas></div>
 
     <script type="text/javascript">
-	
-    //   d3.csv("data.csv", function(data){
+		// d3.text("data.csv", function (data) {
+	// 	var parsedCSV = d3.csv.parseRows(data);
+
 	// 	d3.select("body")
 	// 		.selectAll("div")
-	// 		.data(data)
+	// 		.data(parsedCSV)
 	// 		.enter()
 	// 		.append("div")
-	// 		.attr("class","bar")
-	// 		.style("height",function(d){
-	// 			return d["頻率"]*10 + "px";
+	// 		.filter(function (d, i) {
+	// 			return (i != 0);
 	// 		})
-	//   })
+	// 		.attr("class", "bar")
+	// 		.style("height", function (d) {
+	// 			return 12 * d[1]+12 + "px";
+	// 		})
+	// 		.append("text")
+	// 		.text(function (d) {
+	// 			return d[1];
+	// 		})
+	// 		.style("padding-top", function (d) {
+	// 			return 7 * d[1] + "px";
+	// 		})
 
-	d3.text("data.csv", function (data) {
-		var parsedCSV = d3.csv.parseRows(data);
+	// });
 
-		d3.select("body")
-			.selectAll("div")
-			.data(parsedCSV)
-			.enter()
-			.append("div")
-			.filter(function (d, i) {
-				return (i != 0);
-			})
-			.attr("class", "bar")
-			.style("height", function (d) {
-				return 12 * d[1]+12 + "px";
-			})
-			.append("text")
-			.text(function (d) {
-				return d[1];
-			})
-			.style("padding-top", function (d) {
-				return 7 * d[1] + "px";
-			})
+	d3.csv('https://raw.githubusercontent.com/katyushascarlet/vis2021s/master/lab05/data.csv')
+		.then(makeChart)
 
-	});
+	function makeChart(configData) {
+		console.log(configData);
+		var groupBoundary = configData.map(function (d) { return d.組界 });
+		var frequency = configData.map(function (d) { return d.頻率 });
+		var ctx = document.getElementById('myChart').getContext('2d');
+		console.log(groupBoundary, frequency);
+		Chart.defaults.font.family = 'zpix';
+		Chart.defaults.font.size = 24;
+		var chart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: groupBoundary,
+				datasets: [
+					{
+						data: frequency,
+						backgroundColor: [
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(255, 159, 64, 0.2)',
+							'rgba(255, 205, 86, 0.2)',
+							'rgba(75, 192, 192, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(201, 203, 207, 0.2)'
+						],
+						borderColor: [
+							'rgb(255, 99, 132)',
+							'rgb(255, 159, 64)',
+							'rgb(255, 205, 86)',
+							'rgb(75, 192, 192)',
+							'rgb(54, 162, 235)',
+							'rgb(153, 102, 255)',
+							'rgb(201, 203, 207)'
+						],
+						label: '頻率',
+						borderWidth: 1
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					title: {
+						display: false,
+						text: 'data.csv'
+					}
+				},
+				scales: {
+					x: {
+						title: {
+							display: true,
+							text: '組界'
+						}
+					},
+					y: {
+						title: {
+							display: true,
+							text: '頻率'
+						}
+					}
+				}
+			}
+		})
+	};
 	</script>
 </body>
 </html>
