@@ -1,220 +1,154 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title></title>
+	<meta charset="utf-8">
 	<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 	<style type="text/css">
-
-		body {
-			/* background-image: url("1a.png"); */
-		}
-
 		video {
 			position: absolute;
-			top: 50%;
-			left: 50%;
-			margin-left: -480px;
-			margin-top: -370px;
+			top: 100px;
+			left: 320px;
 		}
 
 		svg {
 			position: absolute;
-			top: 50%;
-			left: 50%;
-			margin-left: -480px;
-			margin-top: -370px;
-			border: 1px solid gray;
+			top: 100px;
+			left: 320px;
+			border: 1px solid red;
 		}
 
-			svg text {
-				font-size: 40px;
-				font-weight: bold;
-				fill: white;
-				stroke: black;
-				stroke-width: 1px;
-				font-family: 'MS PGothic';
-			}
-
-			svg text {
-				/* opacity:0.7; */
-			}
-
-				svg text:hover {
-					/* opacity:1; */
-				}
-
-		text:hover {
-			fill: red;
+		svg text {
+			font-size: 40px;
+			font-weight: bold;
+			fill: white;
+			stroke: black;
+			stroke-width: 1px;
+			font-family: 'MS PGothic';
 		}
 
-		#replay:hover {
-			box-shadow: 0px 0px 5px 5px rgba(255, 128, 128, 0.5);
-		}
-
-		#video:hover {
-			box-shadow: 0px 0px 5px 5px rgba(128, 255, 128, 0.5);
-		}
-
-		#subtitle:hover {
-			box-shadow: 0px 0px 5px 5px rgba(128, 128, 255, 0.5);
-		}
-
-		#subtitle {
-			pointer-events: none;
+		#subtitle-select {
+			position: absolute;
+			top: 60px;
+			left: 320px;
 		}
 	</style>
 </head>
+
 <body>
+	<div id="subtitle-select">
+		<label>字幕語言：</label>
+		<select id="language">
+			<option value="ja">日本語</option>
+			<option value="zh-CN">繁體中文</option>
+			<option value="zh-TW">简体中文</option>
+			<option value="en">English</option>
+			<option value="ko">한국어</option>
+			<option value="vi">Tiếng Việt</option>
+			<option value="id">Bahasa Indonesia</option>
+		</select>
+		<!-- <button type="button" onclick="selectLanguage();">選擇</button> -->
+		<!-- <button type="button" onclick="playVideo();">播放</button> -->
+		<!-- <button type="button" onclick="pauseVideo();">暫停</button> -->
+		<!-- <button type="button" onclick="play();" id="btnPlay">播放</button> -->
+
+		<input type="button" onclick="selectLanguage();" value="選擇">
+		<input type="button" onclick="play();" value="播放" id="btnPlay">
+	</div>
 
 	<video id="video" width="1280" height="720" preload="auto">
-		<source src="./mv.mkv" type="video/mp4">
+		<source src="./video/mv.mp4" type="video/mp4">
 	</video>
 
-	<div id="srt"></div>
+	<div id="srt">
+
+	</div>
 
 	<script type="text/javascript">
-        var w = 1280;
+		var w = 1280;
 		var h = 720;
 		var frame = -1;
 		var textAniTime = 100;
-		var totalTime = '--:--'
 		var maxTimeLength = 0
+		var subtitleLoadStatus = 0;
+		var playerStatus = 0;
 
-        var svg = d3.select('body')
+		var svg = d3.select('body')
 			.append('svg')
-            .attr('width', w)
-            .attr('height', h)
-            .attr('viewbox', function () {
-                return "0, 0, " + w + ', ' + h;
-            })
-            ;
-
-		var play_state = 0
-
-		var playBtnText = svg
-			.append('text')
-			.text("Replay")
-			.attr('x', 540)
-			.attr('y', 350)
-			.attr("text-anchor", "middle")
-			.on('click', function () {
-				if (play_state == 0) {
-					timeline.attr('width',0)
-					play_state = 1
-					frame = -1
-                    playBtnText.text("Pause")
-					document.getElementById("video").play();
-					document.getElementById("video").style.display = "inline";
-				}
-				else if (play_state == 1) {
-					play_state = 2
-                    playBtnText.text("Play")
-					document.getElementById("video").pause();
-				}
-				else if (play_state == 2) {
-					play_state = 1
-                    playBtnText.text("Pause")
-                    document.getElementById("video").play();
-                }
-			});
-
-		svg
-			.on('mouseenter', function () {
-				if (play_state == 0)
-					return
-
-                playBtnText.transition()
-					.duration(100)
-					.attr('opacity',1)
-			})
-			.on('mouseleave', function () {
-				if (play_state == 0)
-					return
-
-				playBtnText.transition()
-					.delay(1000)
-                    .duration(500)
-                    .attr('opacity', 0);
-            })
-
-
-		var timelineGroup = svg.append('g')
-		timelineGroup
-			.append('rect')
 			.attr('width', w)
-            .attr('height', 20)
-            .attr('fill', 'gray')
-            .attr('x', 0)
-            .attr('y', h - 20)
-
-		var timeline = timelineGroup
-			.append('rect')
-            .attr('width', 0)
-            .attr('height', 20)
-            .attr('fill', 'red')
-            .attr('x', 0)
-			.attr('y', h - 20)
-
-        timelineGroup
-            .append('rect')
-            .attr('width', w)
-            .attr('height', 20)
-            .attr('opacity', 0)
-            .attr('x', 0)
-            .attr('y', h - 20)
-			.on('click', function () {
-				frame = -1
-                var coordinates = d3.mouse(this);
-                var x = coordinates[0]
-                time = Math.round(x / w * maxTimeLength);
-                document.getElementById("video").currentTime = time
-
-            })
-
-		d3.select(video)
-			.style('display', 'none')
-			.on('ended', function () {
-				play_state = 0
-				playBtnText.attr('opacity',1)
-				playBtnText.text('Replay')
-				document.getElementById('video').style.display = 'none';
+			.attr('height', h)
+			.attr('viewbox', function () {
+				return "0, 0, " + w + ', ' + h;
 			})
-			.on('timeupdate', () => {
-				play_time(video.currentTime);
-				play_subtitle(video.currentTime);
-			});
+			;
+		// window.onload = function () {
+		// frame = -1
+		// document.getElementById("video").play();
+		// document.getElementById("video").style.display = "inline";
+		// }
 
-		var timeText = svg
-			.append('text')
-			.text('--:--/--:--')
-			.attr('x', 740)
-			.attr('y', 60)
-
-		make_subtitle();
-
-		function play_time(time){
-
-			var second = parseInt(time / 60);
-			var minute = parseInt(time % 60);
-			if (minute < 10)
-				minute = '0' + minute;
-			if (second < 10)
-				second = '0' + second;
-			
-			timeText.text(second + ':' + minute + '/' + totalTime);
-			timeline.attr('width', time/maxTimeLength*w)
+		function selectLanguage() {
+			clearSubtitle();
+			language = document.getElementById("language").value;
+			makeSubtitle(language);
+			frame = -1
+			subtitleLoadStatus = 1;
 		}
 
-		function play_subtitle(currentTime) {
+		// function playVideo() {
+		// 	if (subtitleLoadStatus == 0) {
+		// 		selectLanguage()
+		// 		subtitleLoadStatus = 1;
+		// 	}
+		// 	document.getElementById("video").play();
+		// }
 
+		// function pauseVideo() {
+		// 	// alert('pause');
+		// 	document.getElementById("video").pause();
+		// }
+
+		function play() {
+
+			if (subtitleLoadStatus == 0) {
+				selectLanguage()
+				subtitleLoadStatus = 1;
+			}
+
+			if (playerStatus == 0) {
+				document.getElementById("btnPlay").value = "暫停";
+				document.getElementById("video").play();
+				playerStatus = 1;
+			} else {
+				document.getElementById("btnPlay").value = "播放";
+				document.getElementById("video").pause();
+				playerStatus = 0;
+			}
+		}
+
+
+		function clearSubtitle() {
+			var element = document.getElementsByTagName("svg")[0];
+			element.innerHTML = "";
+			element = document.getElementById("srt");
+			element.innerHTML = "";
+		}
+
+		d3.select(video)
+			// .style('display', 'none')
+			.on('timeupdate', () => {
+				startSubtitle(video.currentTime);
+			});
+
+		function startSubtitle(currentTime) {
 			subtitle.filter(function (d, i) {
-					if (frame < i && currentTime > d.begin && currentTime < d.end) {
-						frame = i;
-						return true;
-					}
-					return false;
-				})
+				if (frame < i && currentTime > d.begin && currentTime < d.end) {
+					frame = i;
+					return true;
+				}
+				return false;
+			})
 				.transition()
 				.duration(textAniTime)
 				.attr('opacity', 1)
@@ -227,51 +161,43 @@
 				;
 		}
 
-		async function make_subtitle() {
-			var myarray = [];
-			d3.text('cht.srt', function(data){
-				console.log(data);
-				//alert(data);
-
+		async function makeSubtitle(file) {
+			var arrayChinese = [];
+			d3.text('./video/' + file + '.srt', function (data) {
 				parsedCSV = d3.csvParseRows(data);
-				console.log(parsedCSV);
-				//alert('parsedCSV.length = ' + parsedCSV.length);
-
 				d3.select('#srt')
-				  .selectAll('p')
-				  .data(parsedCSV)
-				  .enter()
-				  .append("p")
-				  .text(function(d, i){
-				  	//return d;
-				  	if ( !isNaN(d) && d != '' ){
+					.selectAll('p')
+					.data(parsedCSV)
+					.enter()
+					.append("p")
+					.text(function (d, i) {
+						if (!isNaN(d) && d != '') {
 							key = parseInt(d);
-				  	} else if (d == '') {
-				  		myarray.push({
-				  			"begin": begin,
-				  			"end": end,
-				  			"subtile": subtile
-				  		});
-				  	} else if (d.length == 3 ){
-							
-				  		begin = (parseInt(d[0][3]) * 10 + parseInt(d[0][4])) * 60 +
-				  		        (parseInt(d[0][6]) * 10 + parseInt(d[0][7]));
+						} else if (d == '') {
+							arrayChinese.push({
+								"begin": begin,
+								"end": end,
+								"subtile": subtile
+							});
+						} else if (d.length == 3) {
 
-				  		end =   (parseInt(d[1][11]) * 10 + parseInt(d[1][12])) * 60 +
-								(parseInt(d[1][14]) * 10 + parseInt(d[1][15]));
-                            totalTime = d[1][11] + d[1][12] + ':' + d[1][14] + d[1][15]
-                            maxTimeLength = end
-				  	} else {
-				  		subtile = d;
-				  	}
-				  })
+							offset = -0.3
+							begin = (parseInt(d[0][3]) * 10 + parseInt(d[0][4])) * 60 +
+								(parseInt(d[0][6]) * 10 + parseInt(d[0][7])) + offset;
+
+							end = (parseInt(d[1][11]) * 10 + parseInt(d[1][12])) * 60 +
+								(parseInt(d[1][14]) * 10 + parseInt(d[1][15])) + offset;
+							totalTime = d[1][11] + d[1][12] + ':' + d[1][14] + d[1][15]
+							maxTimeLength = end
+						} else {
+							subtile = d;
+						}
+					})
 					;
-				console.log(myarray)
 				subtitle = svg
 					.append('g')
-					.attr('id', 'subtitle')
 					.selectAll('text')
-					.data(myarray)
+					.data(arrayChinese)
 					.enter()
 					.append('text')
 					.text(function (d, i) {
@@ -279,16 +205,14 @@
 					})
 					.attr('x', w / 2)
 					.attr('y', function (d, i) {
-						if (i % 2 == 0) {
-                            return h - 50
-                        }
-						return h-100
+						return h - 50
 					})
 					.attr("text-anchor", "middle")
-					//.style('display', 'none')
 					.attr('opacity', 0)
+			});
+		}
 
-			})
-		}</script>
+	</script>
 </body>
+
 </html>
