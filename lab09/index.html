@@ -1,105 +1,294 @@
+
 <!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+	<style type="text/css">
 
+		body {
+			/* background-image: url("1a.png"); */
+		}
+
+		video {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -480px;
+			margin-top: -370px;
+		}
+
+		svg {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -480px;
+			margin-top: -370px;
+			border: 1px solid gray;
+		}
+
+			svg text {
+				font-size: 40px;
+				font-weight: bold;
+				fill: white;
+				stroke: black;
+				stroke-width: 1px;
+				font-family: 'MS PGothic';
+			}
+
+			svg text {
+				/* opacity:0.7; */
+			}
+
+				svg text:hover {
+					/* opacity:1; */
+				}
+
+		text:hover {
+			fill: red;
+		}
+
+		#replay:hover {
+			box-shadow: 0px 0px 5px 5px rgba(255, 128, 128, 0.5);
+		}
+
+		#video:hover {
+			box-shadow: 0px 0px 5px 5px rgba(128, 255, 128, 0.5);
+		}
+
+		#subtitle:hover {
+			box-shadow: 0px 0px 5px 5px rgba(128, 128, 255, 0.5);
+		}
+
+		#subtitle {
+			pointer-events: none;
+		}
+	</style>
+</head>
 <body>
-    <div id="srt">
 
-    </div>
+	<video id="video" width="1280" height="720" preload="auto">
+		<source src="./mv.mkv" type="video/mp4">
+	</video>
 
-    <script src="https://d3js.org/d3.v3.min.js"></script>
-    <!-- <script src="https://d3js.org/d3.v6.min.js"></script> -->
-    <script type="text/javascript">
-        var myArray = [];
-        var key;
-        var begin;
-        var end;
-        var duration;
-        var subtitle;
+	<div id="srt"></div>
 
-        d3.text("test.srt", function (data) {
-            // console.log(data);
+	<script type="text/javascript">
+        var w = 1280;
+		var h = 720;
+		var frame = -1;
+		var textAniTime = 100;
+		var totalTime = '--:--'
+		var maxTimeLength = 0
 
-            parsedCSV = d3.csv.parseRows(data);
-            // console.log(parsedCSV);
+        var svg = d3.select('body')
+			.append('svg')
+            .attr('width', w)
+            .attr('height', h)
+            .attr('viewbox', function () {
+                return "0, 0, " + w + ', ' + h;
+            })
+            ;
 
-            d3.select('#srt')
-                .selectAll('p')
-                .data(parsedCSV)
-                .enter()
-                .append("p")
-                .text(function (d, i) {
-                    // return d;
-                    if (!isNaN(d) && d != '') {
-                        key = parseInt(d) - 1;
-                    } else if (d == '') {
-                        myArray.push({
-                            "key": key,
-                            "begin": begin,
-                            "end": end,
-                            "duration": end - begin,
-                            "subtitle": subtitle
-                        });
-                    } else if (d.length == 3) {
-                        begin = (parseInt(d[0][3]) * 10 + parseInt(d[0][4])) * 60 +
-                            (parseInt(d[0][6]) * 10 + parseInt(d[0][7]));
+		var play_state = 0
 
-                        end = (parseInt(d[1][11]) * 10 + parseInt(d[1][12])) * 60 +
-                            (parseInt(d[1][14]) * 10 + parseInt(d[1][15]));
-                    } else {
-                        subtitle = d;
-                    }
-                    // console.log('here');
-                    // console.log(myArray);
+		var playBtnText = svg
+			.append('text')
+			.text("Replay")
+			.attr('x', 540)
+			.attr('y', 350)
+			.attr("text-anchor", "middle")
+			.on('click', function () {
+				if (play_state == 0) {
+					timeline.attr('width',0)
+					play_state = 1
+					frame = -1
+                    playBtnText.text("Pause")
+					document.getElementById("video").play();
+					document.getElementById("video").style.display = "inline";
+				}
+				else if (play_state == 1) {
+					play_state = 2
+                    playBtnText.text("Play")
+					document.getElementById("video").pause();
+				}
+				else if (play_state == 2) {
+					play_state = 1
+                    playBtnText.text("Pause")
+                    document.getElementById("video").play();
+                }
+			});
 
-                });
+		svg
+			.on('mouseenter', function () {
+				if (play_state == 0)
+					return
 
-            var w = 960;
-            var h = 540;
+                playBtnText.transition()
+					.duration(100)
+					.attr('opacity',1)
+			})
+			.on('mouseleave', function () {
+				if (play_state == 0)
+					return
 
-            var svg = d3.select('body')
-                .append('svg')
-                .attr('width', w)
-                .attr('height', h)
-                .attr('viewbox', function () {
-                    return "0,0," + w + "," + h;
-                });
+				playBtnText.transition()
+					.delay(1000)
+                    .duration(500)
+                    .attr('opacity', 0);
+            })
 
-            svg.append('rect')
-                .attr('x', "0")
-                .attr('y', "0")
-                .attr('width', w)
-                .attr('height', h)
-                .attr('fill', "none")
-                .attr('stroke', 'red');
 
-            svg.selectAll('text')
-                .data(myArray)
-                .enter()
-                .append('text')
-                .text(function (d) {
-                    // alert(d.subtitle);
-                    return d.subtitle;
-                })
-                .attr('font-size', '66pt')
-                .attr("fill","none")
-                .attr('stroke', 'black')
-                .attr('x', w / 2)
-                .attr('y', function (d, i) {
-                    return h - i * 10
-                })
-                .attr("text-anchor", "middle")
-                .style("font-family","MS PGothic")
-                .attr('opacity', 0)
-                .transition()
-                .delay(function (d) {
-                    return (d.begin - d.duration / 4) * 1000;
-                })
-                .duration(function (d) {
-                    return d.duration * 1000;
-                })
-                .attr('opacity', 1)
-                ;
-        })
-    </script>
+		var timelineGroup = svg.append('g')
+		timelineGroup
+			.append('rect')
+			.attr('width', w)
+            .attr('height', 20)
+            .attr('fill', 'gray')
+            .attr('x', 0)
+            .attr('y', h - 20)
+
+		var timeline = timelineGroup
+			.append('rect')
+            .attr('width', 0)
+            .attr('height', 20)
+            .attr('fill', 'red')
+            .attr('x', 0)
+			.attr('y', h - 20)
+
+        timelineGroup
+            .append('rect')
+            .attr('width', w)
+            .attr('height', 20)
+            .attr('opacity', 0)
+            .attr('x', 0)
+            .attr('y', h - 20)
+			.on('click', function () {
+				frame = -1
+                var coordinates = d3.mouse(this);
+                var x = coordinates[0]
+                time = Math.round(x / w * maxTimeLength);
+                document.getElementById("video").currentTime = time
+
+            })
+
+		d3.select(video)
+			.style('display', 'none')
+			.on('ended', function () {
+				play_state = 0
+				playBtnText.attr('opacity',1)
+				playBtnText.text('Replay')
+				document.getElementById('video').style.display = 'none';
+			})
+			.on('timeupdate', () => {
+				play_time(video.currentTime);
+				play_subtitle(video.currentTime);
+			});
+
+		var timeText = svg
+			.append('text')
+			.text('--:--/--:--')
+			.attr('x', 740)
+			.attr('y', 60)
+
+		make_subtitle();
+
+		function play_time(time){
+
+			var second = parseInt(time / 60);
+			var minute = parseInt(time % 60);
+			if (minute < 10)
+				minute = '0' + minute;
+			if (second < 10)
+				second = '0' + second;
+			
+			timeText.text(second + ':' + minute + '/' + totalTime);
+			timeline.attr('width', time/maxTimeLength*w)
+		}
+
+		function play_subtitle(currentTime) {
+
+			subtitle.filter(function (d, i) {
+					if (frame < i && currentTime > d.begin && currentTime < d.end) {
+						frame = i;
+						return true;
+					}
+					return false;
+				})
+				.transition()
+				.duration(textAniTime)
+				.attr('opacity', 1)
+				.transition()
+				.delay(function (d) {
+					return (d.end - currentTime) * 1000;
+				})
+				.duration(textAniTime)
+				.attr('opacity', 0)
+				;
+		}
+
+		async function make_subtitle() {
+			var myarray = [];
+			d3.text('cht.srt', function(data){
+				console.log(data);
+				//alert(data);
+
+				parsedCSV = d3.csvParseRows(data);
+				console.log(parsedCSV);
+				//alert('parsedCSV.length = ' + parsedCSV.length);
+
+				d3.select('#srt')
+				  .selectAll('p')
+				  .data(parsedCSV)
+				  .enter()
+				  .append("p")
+				  .text(function(d, i){
+				  	//return d;
+				  	if ( !isNaN(d) && d != '' ){
+							key = parseInt(d);
+				  	} else if (d == '') {
+				  		myarray.push({
+				  			"begin": begin,
+				  			"end": end,
+				  			"subtile": subtile
+				  		});
+				  	} else if (d.length == 3 ){
+							
+				  		begin = (parseInt(d[0][3]) * 10 + parseInt(d[0][4])) * 60 +
+				  		        (parseInt(d[0][6]) * 10 + parseInt(d[0][7]));
+
+				  		end =   (parseInt(d[1][11]) * 10 + parseInt(d[1][12])) * 60 +
+								(parseInt(d[1][14]) * 10 + parseInt(d[1][15]));
+                            totalTime = d[1][11] + d[1][12] + ':' + d[1][14] + d[1][15]
+                            maxTimeLength = end
+				  	} else {
+				  		subtile = d;
+				  	}
+				  })
+					;
+				console.log(myarray)
+				subtitle = svg
+					.append('g')
+					.attr('id', 'subtitle')
+					.selectAll('text')
+					.data(myarray)
+					.enter()
+					.append('text')
+					.text(function (d, i) {
+						return d.subtile;
+					})
+					.attr('x', w / 2)
+					.attr('y', function (d, i) {
+						if (i % 2 == 0) {
+                            return h - 50
+                        }
+						return h-100
+					})
+					.attr("text-anchor", "middle")
+					//.style('display', 'none')
+					.attr('opacity', 0)
+
+			})
+		}</script>
 </body>
-
 </html>
